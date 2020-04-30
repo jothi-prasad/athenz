@@ -25,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import com.yahoo.athenz.zms.store.AthenzDomain;
 import com.yahoo.athenz.zms.store.ObjectStoreConnection;
 import com.yahoo.athenz.zms.utils.ZMSUtils;
+import com.yahoo.athenz.zms.ZMSConsts;
 import com.yahoo.rdl.JSON;
 import com.yahoo.rdl.Struct;
 import com.yahoo.rdl.Timestamp;
@@ -292,12 +293,13 @@ public class JDBCConnection implements ObjectStoreConnection {
             "JOIN role r ON r.role_id=rm.role_id " +
             "JOIN domain d ON r.domain_id=d.domain_id WHERE (r.self_serve=true OR r.review_enabled=true) AND rm.last_notified_time=? AND rm.server=?;";
 
-    private static final String SQL_GET_EXPIRED_PENDING_ROLE_MEMBERS = "SELECT d.name, r.name, p.name, prm.expiration, prm.audit_ref, prm.req_time FROM principal p JOIN pending_role_member prm " +
+    private static final String SQL_GET_EXPIRED_PENDING_ROLE_MEMBERS = "SELECT d.name, r.name, p.name, prm.expiration, prm.audit_ref, prm.req_time, prm.req_principal " +
+            "FROM principal p JOIN pending_role_member prm " +
             "ON prm.principal_id=p.principal_id JOIN role r ON prm.role_id=r.role_id JOIN domain d ON d.domain_id=r.domain_id " +
             "WHERE prm.req_time < (CURRENT_DATE - INTERVAL ? DAY);";
 
     private static final String SQL_UPDATE_PENDING_ROLE_MEMBERS_NOTIFICATION_TIMESTAMP = "UPDATE pending_role_member SET last_notified_time=?, server=? " +
-            "WHERE DAYOFWEEK(req_time)=DAYOFWEEK(?) AND last_notified_time < (CURRENT_DATE - INTERVAL 1 DAY);";
+            "WHERE DAYOFWEEK(req_time)=DAYOFWEEK(?) AND (last_notified_time IS NULL || last_notified_time < (CURRENT_DATE - INTERVAL 1 DAY));";
 
     private static final String SQL_UPDATE_ROLE_MEMBERS_EXPIRY_NOTIFICATION_TIMESTAMP = "UPDATE role_member SET last_notified_time=?, server=? " +
             "WHERE expiration > CURRENT_TIME AND DATEDIFF(expiration, CURRENT_TIME) IN (1,7,14,21,28) AND (last_notified_time IS NULL || last_notified_time < (CURRENT_DATE - INTERVAL 1 DAY));";
@@ -319,6 +321,8 @@ public class JDBCConnection implements ObjectStoreConnection {
     private static final String ALL_PRINCIPALS  = "*";
 
     private static final String AWS_ARN_PREFIX  = "arn:aws:iam::";
+
+    private static final String MYSQL_SERVER_TIMEZONE = System.getProperty(ZMSConsts.ZMS_PROP_MYSQL_SERVER_TIMEZONE, "GMT");
 
     Connection con;
     boolean transactionCompleted;
@@ -646,7 +650,7 @@ public class JDBCConnection implements ObjectStoreConnection {
 
     PreparedStatement prepareDomainScanStatement(String prefix, long modifiedSince)
             throws SQLException {
-        
+
         PreparedStatement ps;
         if (prefix != null && prefix.length() > 0) {
             int len = prefix.length();
@@ -656,7 +660,7 @@ public class JDBCConnection implements ObjectStoreConnection {
                 ps = con.prepareStatement(SQL_LIST_DOMAIN_PREFIX_MODIFIED);
                 ps.setString(1, prefix);
                 ps.setString(2, stop);
-                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+                Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(MYSQL_SERVER_TIMEZONE));
                 ps.setTimestamp(3, new java.sql.Timestamp(modifiedSince), cal);
             } else {
                 ps = con.prepareStatement(SQL_LIST_DOMAIN_PREFIX);
@@ -665,14 +669,15 @@ public class JDBCConnection implements ObjectStoreConnection {
             }
         } else if (modifiedSince != 0) {
             ps = con.prepareStatement(SQL_LIST_DOMAIN_MODIFIED);
-            Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+            Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(MYSQL_SERVER_TIMEZONE));
             ps.setTimestamp(1, new java.sql.Timestamp(modifiedSince), cal);
         } else {
             ps = con.prepareStatement(SQL_LIST_DOMAIN);
         }
         return ps;
     }
-    
+
+   
     PreparedStatement prepareScanByRoleStatement(String roleMember, String roleName)
             throws SQLException {
         
