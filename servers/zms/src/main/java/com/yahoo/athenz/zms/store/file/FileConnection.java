@@ -403,6 +403,27 @@ public class FileConnection implements ObjectStoreConnection {
     }
 
     @Override
+    public boolean updateDomainTemplate(String domainName, String templateName, int currentVersion) {
+        DomainStruct domainStruct = getDomainStruct(domainName);
+        if (domainStruct == null) {
+            throw ZMSUtils.error(ResourceException.NOT_FOUND, "domain not found", "updateDomainTemplate");
+        }
+        if (domainStruct.getTemplates() == null) {
+            domainStruct.setTemplates(new ArrayList<>());
+        }
+        ArrayList<String> templates = domainStruct.getTemplates();
+        if (!templates.contains(templateName)) {
+            templates.add(templateName);
+        }
+        TemplateMetaData templateMeta = new TemplateMetaData();
+        templateMeta.setCurrentVersion(currentVersion);
+        domainStruct.setTemplateMeta(templateMeta);
+
+        putDomainStruct(domainName, domainStruct);
+        return true;
+    }
+
+    @Override
     public boolean deleteDomainTemplate(String domainName, String templateName, String params) {
         DomainStruct domainStruct = getDomainStruct(domainName);
         if (domainStruct == null) {

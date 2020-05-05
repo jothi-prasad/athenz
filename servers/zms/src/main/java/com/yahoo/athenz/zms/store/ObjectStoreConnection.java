@@ -55,6 +55,7 @@ public interface ObjectStoreConnection extends Closeable {
     // Template commands
     
     boolean insertDomainTemplate(String domainName, String templateName, String params);
+    boolean updateDomainTemplate(String domainName, String templateName, int currentVersion);
     boolean deleteDomainTemplate(String domainName, String templateName, String params);
     List<String> listDomainTemplates(String domainName);
 

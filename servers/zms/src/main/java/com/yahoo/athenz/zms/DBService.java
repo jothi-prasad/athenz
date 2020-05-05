@@ -2707,12 +2707,15 @@ public class DBService {
         
         // if adding a template, only add if it is not in our current list
         // check to see if the template is already listed for the domain
-            
+
         List<String> currentTemplateList = con.listDomainTemplates(domainName);
         if (!currentTemplateList.contains(templateName)) {
             con.insertDomainTemplate(domainName, templateName, null);
         }
-        
+
+        if (template.getMetadata().getLatestVersion() != null) {
+            con.updateDomainTemplate(domainName, templateName, template.getMetadata().getLatestVersion());
+        }
         auditDetails.append("}");
         return true;
     }

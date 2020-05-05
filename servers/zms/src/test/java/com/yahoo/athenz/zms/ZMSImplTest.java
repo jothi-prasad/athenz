@@ -11759,7 +11759,7 @@ public class ZMSImplTest {
         
         Template template = zms.getTemplate(mockDomRsrcCtx, "user_provisioning");
         assertNotNull(template);
-        
+
         List<Role> roles = template.getRoles();
         assertNotNull(roles);
         assertEquals(3, roles.size());
@@ -11826,7 +11826,7 @@ public class ZMSImplTest {
         assertEquals(1, userPolicy.getAssertions().size());
         assertEquals(1, superuserPolicy.getAssertions().size());
         assertEquals(2, openstackReadersPolicy.getAssertions().size());
-        
+
         template = zms.getTemplate(mockDomRsrcCtx, "vipng");
         assertNotNull(template);
         
@@ -11835,6 +11835,12 @@ public class ZMSImplTest {
         
         template = zms.getTemplate(mockDomRsrcCtx, "VipNg");
         assertNotNull(template);
+
+        assertEquals(10, template.getMetadata().getLatestVersion().intValue());
+        assertEquals("2020-04-28T00:00:00.000Z", template.getMetadata().timestamp.toString());
+        assertEquals("Vipng template", template.getMetadata().description);
+        assertEquals("none", template.getMetadata().keywordsToReplace);
+        assertFalse(template.getMetadata().getAutoUpdate());
     }
     
     @Test

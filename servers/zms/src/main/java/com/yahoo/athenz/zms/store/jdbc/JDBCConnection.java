@@ -189,6 +189,7 @@ public class JDBCConnection implements ObjectStoreConnection {
     private static final String SQL_LIST_ENTITY = "SELECT name FROM entity WHERE domain_id=?;";
     private static final String SQL_COUNT_ENTITY = "SELECT COUNT(*) FROM entity WHERE domain_id=?;";
     private static final String SQL_INSERT_DOMAIN_TEMPLATE = "INSERT INTO domain_template (domain_id, template) VALUES (?,?);";
+    private static final String SQL_UPDATE_DOMAIN_TEMPLATE = "UPDATE domain_template SET current_version=? WHERE domain_id=? and template=?;";
     private static final String SQL_DELETE_DOMAIN_TEMPLATE = "DELETE FROM domain_template WHERE domain_id=? AND template=?;";
     private static final String SQL_LIST_DOMAIN_TEMPLATE = "SELECT template FROM domain_template "
             + "JOIN domain ON domain_template.domain_id=domain.domain_id "
@@ -788,6 +789,27 @@ public class JDBCConnection implements ObjectStoreConnection {
         }
         return (affectedRows > 0);
     }
+
+    @Override
+    public boolean updateDomainTemplate(String domainName, String templateName, int currentVersion) {
+
+        final String caller = "updateDomainTemplate";
+        int domainId = getDomainId(domainName);
+        if (domainId == 0) {
+            throw notFoundError(caller, ZMSConsts.OBJECT_DOMAIN, domainName);
+        }
+        int affectedRows;
+        try (PreparedStatement ps = con.prepareStatement(SQL_UPDATE_DOMAIN_TEMPLATE)) {
+            ps.setInt(1, currentVersion);
+            ps.setInt(2, domainId);
+            ps.setString(3, templateName);
+            affectedRows = executeUpdate(ps, caller);
+        } catch (SQLException ex) {
+            throw sqlError(ex, caller);
+        }
+        return (affectedRows > 0);
+    }
+
 
     @Override
     public boolean deleteDomainTemplate(String domainName, String templateName, String params) {

@@ -4761,30 +4761,74 @@ public class JDBCConnectionTest {
 
     @Test
     public void testInsertDomainTemplate() throws Exception {
-        
+
         JDBCConnection jdbcConn = new JDBCConnection(mockConn, true);
 
         Mockito.when(mockResultSet.getInt(1))
             .thenReturn(5); // domain id
         Mockito.when(mockResultSet.next())
             .thenReturn(true); // this one is for domain id
-            
+
         Mockito.doReturn(1).when(mockPrepStmt).executeUpdate();
 
         boolean requestSuccess = jdbcConn.insertDomainTemplate("my-domain", "platforms", null);
-        
+
         // this is combined for all operations above
-        
+
         Mockito.verify(mockPrepStmt, times(1)).setString(1, "my-domain");
         Mockito.verify(mockPrepStmt, times(1)).setString(2, "platforms");
-        
+
         Mockito.verify(mockPrepStmt, times(1)).setInt(1, 5);
         Mockito.verify(mockPrepStmt, times(1)).setString(2, "platforms");
-        
+
         assertTrue(requestSuccess);
         jdbcConn.close();
     }
-    
+
+    @Test
+    public void testUpdateDomainTemplate() throws Exception {
+
+        JDBCConnection jdbcConn = new JDBCConnection(mockConn, true);
+
+        Mockito.when(mockResultSet.getInt(1))
+                .thenReturn(5); // domain id
+        Mockito.when(mockResultSet.next())
+                .thenReturn(true); // this one is for domain id
+
+        Mockito.doReturn(1).when(mockPrepStmt).executeUpdate();
+
+        boolean requestSuccess = jdbcConn.updateDomainTemplate("test-domain", "aws", 4);
+
+        // this is combined for all operations above
+
+        Mockito.verify(mockPrepStmt, times(1)).setString(1, "test-domain");
+        Mockito.verify(mockPrepStmt, times(1)).setInt(1, 4);
+        Mockito.verify(mockPrepStmt, times(1)).setInt(2, 5);
+        Mockito.verify(mockPrepStmt, times(1)).setString(3, "aws");
+
+        assertTrue(requestSuccess);
+        jdbcConn.close();
+    }
+
+    @Test
+    public void testUpdateDomainTemplateWithInvalidDomain() throws Exception {
+
+        JDBCConnection jdbcConn = new JDBCConnection(mockConn, true);
+
+        Mockito.when(mockResultSet.next())
+                .thenReturn(false); // this one is for domain id
+
+        Mockito.doReturn(1).when(mockPrepStmt).executeUpdate();
+
+        try {
+            jdbcConn.updateDomainTemplate("test-domain", "aws_bastion", 4);
+            fail();
+        } catch (Exception ex) {
+            assertTrue(true);
+        }
+        jdbcConn.close();
+    }
+
     @Test
     public void testInsertDomainTemplateInvalidDomain() throws Exception {
         
