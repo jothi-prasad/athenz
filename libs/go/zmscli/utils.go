@@ -77,7 +77,9 @@ func indexOfString(s []string, match string) int {
 
 func (cli Zms) validatedUser(user string) string {
 	if !strings.Contains(user, ".") {
-		return cli.UserDomain + "." + user
+		//removing for testing * in sys env where we donot have ui
+		// return cli.UserDomain + "." + user
+		return user
 	}
 	return user
 }
@@ -86,7 +88,8 @@ func (cli Zms) validatedUsers(users []string, forceSelf bool) []string {
 	validatedUsers := make([]string, 0)
 	for _, v := range users {
 		if !strings.Contains(v, ".") {
-			validatedUsers = append(validatedUsers, cli.UserDomain+"."+v)
+			// validatedUsers = append(validatedUsers, cli.UserDomain+"."+v)
+			validatedUsers = append(validatedUsers, v)
 		} else {
 			validatedUsers = append(validatedUsers, v)
 		}
@@ -132,7 +135,8 @@ func (cli Zms) convertRoleMembers(users []string) []*zms.RoleMember {
 	for _, v := range users {
 		roleMember := zms.NewRoleMember()
 		if !strings.Contains(v, ".") {
-			roleMember.MemberName = zms.MemberName(cli.UserDomain + "." + v)
+			// roleMember.MemberName = zms.MemberName(cli.UserDomain + "." + v)
+			roleMember.MemberName = zms.MemberName(v)
 		} else {
 			roleMember.MemberName = zms.MemberName(v)
 		}

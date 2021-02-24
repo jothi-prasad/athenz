@@ -585,7 +585,7 @@ func (cli *Zms) EvalCommand(params []string) (*string, error) {
 			}
 		case "add-provider-resource-group-roles":
 			if argc > 4 {
-				createAdminRole, err :=strconv.ParseBool(args[3])
+				createAdminRole, err := strconv.ParseBool(args[3])
 				if err == nil {
 					return cli.AddProviderResourceGroupRoles(dn, args[0], args[1], args[2], createAdminRole, args[4:])
 				}
