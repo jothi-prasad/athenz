@@ -4422,6 +4422,7 @@ public class ZTSImplTest {
 
         ztsImpl.instanceProviderManager = instanceProviderManager;
         ztsImpl.instanceCertManager = instanceManager;
+        ztsImpl.enableWorkloadStore = true;
 
         InstanceRegisterInformation info = new InstanceRegisterInformation()
                 .setAttestationData("attestationData").setCsr(certCsr)
@@ -4434,6 +4435,7 @@ public class ZTSImplTest {
         assertEquals(response.getStatus(), 201);
         InstanceIdentity resIdentity = (InstanceIdentity) response.getEntity();
         assertNotNull(resIdentity.getX509Certificate());
+        ztsImpl.enableWorkloadStore = false;
     }
 
     @Test
@@ -11538,9 +11540,9 @@ public class ZTSImplTest {
         InstanceCertManager origICM = zts.instanceCertManager;
         zts.instanceCertManager = mockICM;
         Mockito.when(mockICM.insertWorkloadRecord(any())).thenReturn(true, false);
-        zts.insertWorkloadRecord("athenz.api", "openstack", "123", "");
+        zts.insertWorkloadRecord("athenz.api", "openstack", "123", "", "hostname-1");
         Mockito.verify(mockICM, Mockito.times(0)).insertWorkloadRecord(any(WorkloadRecord.class));
-        zts.insertWorkloadRecord("athenz.api", "openstack", "123", "10.0.0.1, 10.0.0.2");
+        zts.insertWorkloadRecord("athenz.api", "openstack", "123", "10.0.0.1, 10.0.0.2","hostname-1");
         Mockito.verify(mockICM, Mockito.times(2)).insertWorkloadRecord(any(WorkloadRecord.class));
         zts.instanceCertManager = origICM;
     }
