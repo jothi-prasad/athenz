@@ -11471,15 +11471,15 @@ public class ZTSImplTest {
 
         List<Workload> dynamicWls = new ArrayList<>();
         Workload wl1 = new Workload().setProvider("openstack").setIpAddresses(svcIps)
-                .setUuid("instance-id-os-1").setUpdateTime(Timestamp.fromCurrentTime());
+                .setUuid("instance-id-os-1").setUpdateTime(Timestamp.fromCurrentTime()).setHostname("test1.host.yahoo.cloud");
         Workload wl2 = new Workload().setProvider("openstack").setIpAddresses(Collections.singletonList("10.1.1.2"))
-                .setUuid("instance-id-os-2").setUpdateTime(Timestamp.fromCurrentTime());
+                .setUuid("instance-id-os-2").setUpdateTime(Timestamp.fromCurrentTime()).setHostname("test2.host.yahoo.cloud");
         Workload wl3 = new Workload().setProvider("kubernetes").setIpAddresses(Collections.singletonList("10.2.1.1"))
-                .setUuid("instance-id-k8s-1").setUpdateTime(Timestamp.fromCurrentTime());
+                .setUuid("instance-id-k8s-1").setUpdateTime(Timestamp.fromCurrentTime()).setHostname("test3.host.yahoo.cloud");
         Workload wl4 = new Workload().setProvider("kubernetes").setIpAddresses(Collections.singletonList("10.2.1.2"))
-                .setUuid("instance-id-k8s-2").setUpdateTime(Timestamp.fromCurrentTime());
+                .setUuid("instance-id-k8s-2").setUpdateTime(Timestamp.fromCurrentTime()).setHostname("test4.host.yahoo.cloud");
         Workload wl5 = new Workload().setProvider("aws").setIpAddresses(Collections.singletonList("10.3.1.1"))
-                .setUuid("instance-id-aws-1").setUpdateTime(Timestamp.fromCurrentTime());
+                .setUuid("instance-id-aws-1").setUpdateTime(Timestamp.fromCurrentTime()).setHostname("test5.host.yahoo.cloud");
         dynamicWls.add(wl1);
         dynamicWls.add(wl2);
         dynamicWls.add(wl3);
@@ -11507,9 +11507,9 @@ public class ZTSImplTest {
 
         List<Workload> dynamicWls = new ArrayList<>();
         Workload wl1 = new Workload().setProvider("openstack").setDomainName("dom1").setServiceName("svc1")
-                .setUuid("instance-id-os-1").setUpdateTime(Timestamp.fromCurrentTime());
+                .setUuid("instance-id-os-1").setUpdateTime(Timestamp.fromCurrentTime()).setHostname("test1.host.yahoo.cloud");
         Workload wl2 = new Workload().setProvider("openstack").setDomainName("dom1").setServiceName("svc2")
-                .setUuid("instance-id-os-1").setUpdateTime(Timestamp.fromCurrentTime());
+                .setUuid("instance-id-os-1").setUpdateTime(Timestamp.fromCurrentTime()).setHostname("test2.host.yahoo.cloud");
 
         dynamicWls.add(wl1);
         dynamicWls.add(wl2);

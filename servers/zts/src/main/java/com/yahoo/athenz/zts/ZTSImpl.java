@@ -2933,7 +2933,7 @@ public class ZTSImpl implements KeyStore, ZTSHandler {
             workloadRecord.setService(cn);
             workloadRecord.setCreationTime(new Date());
             workloadRecord.setUpdateTime(new Date());
-            workloadRecord.setHostname(serverHostName);
+            workloadRecord.setHostname(hostName);
             if (!instanceCertManager.insertWorkloadRecord(workloadRecord)) {
                 LOGGER.error("unable to insert workload record={}", workloadRecord);
             }
@@ -3359,10 +3359,6 @@ public class ZTSImpl implements KeyStore, ZTSHandler {
 
         if (enableWorkloadStore && !athenzSysDomainCache.isWorkloadStoreExcludedProvider(provider)) {
             // workloads store update is on best-effort basis. No errors are thrown if the op is not successful.
-//            String hostName = info.getHostname();
-//            if (hostName == null) {
-//                hostName = domain + "." + service + "." + sanIpStrForWorkloadStore;
-//            }
             updateWorkloadRecord(AthenzUtils.getPrincipalName(domain, service), provider, instanceId, sanIpStrForWorkloadStore);
         }
 

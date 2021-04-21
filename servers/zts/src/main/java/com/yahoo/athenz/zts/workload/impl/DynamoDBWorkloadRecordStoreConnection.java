@@ -146,7 +146,6 @@ public class DynamoDBWorkloadRecordStoreConnection implements WorkloadRecordStor
                             new AttributeUpdate(KEY_PROVIDER).put(workloadRecord.getProvider()),
                             new AttributeUpdate(KEY_IP).put(workloadRecord.getIp()),
                             new AttributeUpdate(KEY_INSTANCE_ID).put(workloadRecord.getInstanceId()),
-                            new AttributeUpdate(KEY_HOSTNAME).put(workloadRecord.getHostname()),
                             new AttributeUpdate(KEY_CREATION_TIME).put(DynamoDBUtils.getLongFromDate(workloadRecord.getCreationTime())),
                             new AttributeUpdate(KEY_UPDATE_TIME).put(DynamoDBUtils.getLongFromDate(workloadRecord.getUpdateTime())),
                             new AttributeUpdate(KEY_TTL).put(workloadRecord.getUpdateTime().getTime() / 1000L + expiryTime)
