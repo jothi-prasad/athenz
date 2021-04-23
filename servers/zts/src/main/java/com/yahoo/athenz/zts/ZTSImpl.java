@@ -3886,7 +3886,7 @@ public class ZTSImpl implements KeyStore, ZTSHandler {
         // check against that principal
         
         if (checkPrincipal != null) {
-            principal = createPrincipalForName(checkPrincipal);
+            principal = createPrincipalForName(checkPrincipal.toLowerCase());
         }
         
         // create our response object and set the flag whether

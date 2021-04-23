@@ -3399,10 +3399,19 @@ public class ZTSImplTest {
         access = zts.getResourceAccess(ctx, "update", domainName + ":table1", null, "user.user2");
         assertFalse(access.getGranted());
 
+        access = zts.getResourceAccess(ctx, "update", domainName + ":table1", null, "user.USER2");
+        assertFalse(access.getGranted());
+
         access = zts.getResourceAccess(ctx, "update", domainName + ":table1", null, "user.user3");
         assertTrue(access.getGranted());
 
+        access = zts.getResourceAccess(ctx, "update", domainName + ":table1", null, "user.USER3");
+        assertTrue(access.getGranted());
+
         access = zts.getResourceAccess(ctx, "update", domainName + ":table2", null, "user.user3");
+        assertFalse(access.getGranted());
+
+        access = zts.getResourceAccess(ctx, "update", domainName + ":table2", null, "user.USER3");
         assertFalse(access.getGranted());
 
         store.getCacheStore().invalidate(domainName);
@@ -11118,7 +11127,7 @@ public class ZTSImplTest {
 
         // next system based match
 
-        authzDetails = "[{\"type\":\"proxy_access\",\"principal\":\"spiffe://athenz/sa/api\"}]";
+        authzDetails = "[{\"type\":\"proxy_access\",\"principal\":[\"spiffe://athenz/sa/api\"]}]";
         resp = ztsImpl.postAccessTokenRequest(context,
                 "grant_type=client_credentials&scope=coretech:role.writers&authorization_details=" + authzDetails);
         assertNotNull(resp);
@@ -11139,7 +11148,7 @@ public class ZTSImplTest {
 
         authzDetails = "[{\"type\":\"message_access\",\"location\":[\"https://location1\"," +
                 "\"https://location2\"],\"identifier\":\"id1\"}," +
-                "{\"type\":\"proxy_access\",\"principal\":\"spiffe://athenz.proxy/sa/api\"}]";
+                "{\"type\":\"proxy_access\",\"principal\":[\"spiffe://athenz.proxy/sa/api\"]}]";
         resp = ztsImpl.postAccessTokenRequest(context,
                 "grant_type=client_credentials&scope=coretech:role.writers&authorization_details=" + authzDetails);
         assertNotNull(resp);
