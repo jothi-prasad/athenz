@@ -2906,7 +2906,7 @@ public class ZTSImpl implements KeyStore, ZTSHandler {
 
         if (enableWorkloadStore && !athenzSysDomainCache.isWorkloadStoreExcludedProvider(provider)) {
             // insert into workloads store is on best-effort basis. No errors are thrown if the op is not successful.
-            insertWorkloadRecord(cn, provider, certReqInstanceId, sanIpStrForWorkloadStore, info.getHostname());
+            insertWorkloadRecord(cn, provider, certReqInstanceId, sanIpStrForWorkloadStore, info.getHostname(), newCert.getNotAfter());
         }
         
         // if we're asked to return an NToken in addition to ZTS Certificate
@@ -2930,10 +2930,11 @@ public class ZTSImpl implements KeyStore, ZTSHandler {
                 .header("Location", location).build();
     }
 
-    void insertWorkloadRecord(String cn, String provider, String certReqInstanceId, String sanIpStr, String hostName) {
+    void insertWorkloadRecord(String cn, String provider, String certReqInstanceId, String sanIpStr, String hostName, Date certExpiryTime) {
         if (StringUtil.isEmpty(sanIpStr)) {
             return;
         }
+        LOGGER.debug("insertWL cert expiry time..{}", certExpiryTime);
         if (hostName == null) {
             hostName = cn + "." + sanIpStr;
             if (LOGGER.isDebugEnabled()) {
@@ -2951,13 +2952,14 @@ public class ZTSImpl implements KeyStore, ZTSHandler {
             workloadRecord.setHostname(hostName);
             workloadRecord.setCreationTime(new Date());
             workloadRecord.setUpdateTime(new Date());
+            workloadRecord.setCertExpiryTime(certExpiryTime);
             if (!instanceCertManager.insertWorkloadRecord(workloadRecord)) {
                 LOGGER.error("unable to insert workload record={}", workloadRecord);
             }
         }
     }
 
-    void updateWorkloadRecord(String cn, String provider, String certReqInstanceId, String sanIpStr) {
+    void updateWorkloadRecord(String cn, String provider, String certReqInstanceId, String sanIpStr, Date certExpiryTime) {
         if (StringUtil.isEmpty(sanIpStr)) {
             return;
         }
@@ -2972,6 +2974,7 @@ public class ZTSImpl implements KeyStore, ZTSHandler {
             workloadRecord.setService(cn);
             workloadRecord.setCreationTime(currDate);
             workloadRecord.setUpdateTime(currDate);
+            workloadRecord.setCertExpiryTime(certExpiryTime);
             if (!instanceCertManager.updateWorkloadRecord(workloadRecord)) {
                 LOGGER.error("unable to update workload record={}", workloadRecord);
             }
@@ -3376,7 +3379,7 @@ public class ZTSImpl implements KeyStore, ZTSHandler {
 
         if (enableWorkloadStore && !athenzSysDomainCache.isWorkloadStoreExcludedProvider(provider)) {
             // workloads store update is on best-effort basis. No errors are thrown if the op is not successful.
-            updateWorkloadRecord(AthenzUtils.getPrincipalName(domain, service), provider, instanceId, sanIpStrForWorkloadStore);
+            updateWorkloadRecord(AthenzUtils.getPrincipalName(domain, service), provider, instanceId, sanIpStrForWorkloadStore, newCert.getNotAfter());
         }
 
         // log our certificate

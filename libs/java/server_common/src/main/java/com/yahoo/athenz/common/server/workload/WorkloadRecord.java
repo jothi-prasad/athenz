@@ -26,6 +26,16 @@ public class WorkloadRecord {
     private Date updateTime;
     private String hostname;
 
+    public Date getCertExpiryTime() {
+        return certExpiryTime;
+    }
+
+    public void setCertExpiryTime(Date certExpiryTime) {
+        this.certExpiryTime = certExpiryTime;
+    }
+
+    private Date certExpiryTime;
+
     public String getHostname() {
         return hostname;
     }
@@ -83,7 +93,7 @@ public class WorkloadRecord {
 
     @Override
     public String toString() {
-        return "WorkloadRecord{" +
+        return "com.yahoo.athenz.common.server.workload.WorkloadRecord{" +
                 "service='" + service + '\'' +
                 ", provider='" + provider + '\'' +
                 ", instanceId='" + instanceId + '\'' +
@@ -91,6 +101,7 @@ public class WorkloadRecord {
                 ", creationTime=" + creationTime +
                 ", updateTime=" + updateTime +
                 ", hostname='" + hostname + '\'' +
+                ", certExpiryTime=" + certExpiryTime +
                 '}';
     }
 }

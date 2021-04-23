@@ -46,6 +46,7 @@ public class DynamoDBWorkloadRecordStoreConnection implements WorkloadRecordStor
     private static final String KEY_HOSTNAME = "hostname";
     private static final String KEY_CREATION_TIME = "creationTime";
     private static final String KEY_UPDATE_TIME = "updateTime";
+    private static final String KEY_EXPIRY_TIME = "certExpiryTime";
     private static final String KEY_TTL = "ttl";
 
     // the configuration setting is in hours so we'll automatically
@@ -130,7 +131,7 @@ public class DynamoDBWorkloadRecordStoreConnection implements WorkloadRecordStor
         workloadRecord.setProvider(item.getString(KEY_PROVIDER));
         workloadRecord.setCreationTime(DynamoDBUtils.getDateFromItem(item, KEY_CREATION_TIME));
         workloadRecord.setUpdateTime(DynamoDBUtils.getDateFromItem(item, KEY_UPDATE_TIME));
-
+        workloadRecord.setCertExpiryTime(DynamoDBUtils.getDateFromItem(item, KEY_EXPIRY_TIME));
         return workloadRecord;
     }
 
@@ -148,6 +149,7 @@ public class DynamoDBWorkloadRecordStoreConnection implements WorkloadRecordStor
                             new AttributeUpdate(KEY_INSTANCE_ID).put(workloadRecord.getInstanceId()),
                             new AttributeUpdate(KEY_CREATION_TIME).put(DynamoDBUtils.getLongFromDate(workloadRecord.getCreationTime())),
                             new AttributeUpdate(KEY_UPDATE_TIME).put(DynamoDBUtils.getLongFromDate(workloadRecord.getUpdateTime())),
+                            new AttributeUpdate(KEY_EXPIRY_TIME).put(DynamoDBUtils.getLongFromDate(workloadRecord.getCertExpiryTime())),
                             new AttributeUpdate(KEY_TTL).put(workloadRecord.getUpdateTime().getTime() / 1000L + expiryTime)
                     );
             updateItemRetryDynamoDBCommand.run(() -> table.updateItem(updateItemSpec));
@@ -170,6 +172,7 @@ public class DynamoDBWorkloadRecordStoreConnection implements WorkloadRecordStor
                     .withString(KEY_HOSTNAME, workloadRecord.getHostname())
                     .with(KEY_CREATION_TIME, DynamoDBUtils.getLongFromDate(workloadRecord.getCreationTime()))
                     .with(KEY_UPDATE_TIME, DynamoDBUtils.getLongFromDate(workloadRecord.getUpdateTime()))
+                    .with(KEY_EXPIRY_TIME, DynamoDBUtils.getLongFromDate(workloadRecord.getCertExpiryTime()))
                     .withLong(KEY_TTL, workloadRecord.getUpdateTime().getTime() / 1000L + expiryTime);
             putItemRetryDynamoDBCommand.run(() -> table.putItem(item));
             return true;

@@ -193,7 +193,7 @@ public class DynamoDBWorkloadRecordStoreConnectionTest {
         workloadRecord.setUpdateTime(currDate);
 
         Item item = ItemUtils.toItem(ZTSTestUtils.generateWorkloadAttributeValues("athenz.api", "1234", "opensack", "10.0.0.1", "test-host.corp.yahoo.com",
-                Long.toString(currTime), Long.toString(currTime)));
+                Long.toString(currTime), Long.toString(currTime),Long.toString(currTime)));
 
 
         Mockito.doReturn(putOutcome).when(table).putItem(item);
