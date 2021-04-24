@@ -151,13 +151,11 @@ public class JDBCWorkloadRecordStoreConnection implements WorkloadRecordStoreCon
 
     @Override
     public boolean updateWorkloadRecord(WorkloadRecord workloadRecord) {
-//        java.sql.Timestamp certExpiryTime = null;
         int affectedRows;
         final String caller = "updateWorkloadRecord";
 
         try (PreparedStatement ps = con.prepareStatement(SQL_UPDATE_WORKLOAD_RECORD)) {
             ps.setString(1, processInsertValue(workloadRecord.getProvider()));
-//                certExpiryTime = new java.sql.Timestamp(workloadRecord.getCertExpiryTime().getTime());
             ps.setTimestamp(2, new java.sql.Timestamp(workloadRecord.getCertExpiryTime().getTime()));
             ps.setString(3, processInsertValue(workloadRecord.getInstanceId()));
             ps.setString(4, processInsertValue(workloadRecord.getService()));
@@ -171,7 +169,6 @@ public class JDBCWorkloadRecordStoreConnection implements WorkloadRecordStoreCon
 
     @Override
     public boolean insertWorkloadRecord(WorkloadRecord workloadRecord) {
-//        java.sql.Timestamp certExpiryTime = null;
         int affectedRows;
         final String caller = "insertWorkloadRecord";
         try (PreparedStatement ps = con.prepareStatement(SQL_INSERT_WORKLOAD_RECORD)) {

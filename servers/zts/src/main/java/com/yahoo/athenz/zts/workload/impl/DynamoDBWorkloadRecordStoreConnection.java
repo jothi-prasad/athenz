@@ -127,11 +127,17 @@ public class DynamoDBWorkloadRecordStoreConnection implements WorkloadRecordStor
         workloadRecord.setInstanceId(item.getString(KEY_INSTANCE_ID));
         workloadRecord.setService(item.getString(KEY_SERVICE));
         workloadRecord.setIp(item.getString(KEY_IP));
-        workloadRecord.setHostname(item.getString(KEY_HOSTNAME));
+        LOGGER.debug("is db field hostname present in dynamo db (item.hasattribute check).. {}", item.hasAttribute(KEY_HOSTNAME));
+        if (item.hasAttribute(KEY_HOSTNAME)) {
+            workloadRecord.setHostname(item.getString(KEY_HOSTNAME));
+        }
         workloadRecord.setProvider(item.getString(KEY_PROVIDER));
         workloadRecord.setCreationTime(DynamoDBUtils.getDateFromItem(item, KEY_CREATION_TIME));
         workloadRecord.setUpdateTime(DynamoDBUtils.getDateFromItem(item, KEY_UPDATE_TIME));
-        workloadRecord.setCertExpiryTime(DynamoDBUtils.getDateFromItem(item, KEY_EXPIRY_TIME));
+        LOGGER.debug("is db field certexpirytime present in dynamo db (item.hasattribute check).. {}", item.hasAttribute(KEY_EXPIRY_TIME));
+        if (item.hasAttribute(KEY_EXPIRY_TIME)) {
+            workloadRecord.setCertExpiryTime(DynamoDBUtils.getDateFromItem(item, KEY_EXPIRY_TIME));
+        }
         return workloadRecord;
     }
 
