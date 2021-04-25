@@ -1076,7 +1076,7 @@ public class InstanceCertManager {
             String mapKey;
             for (WorkloadRecord workloadRecord : workloadRecords) {
                 mapKey = workloadRecord.getInstanceId() + ":" + workloadRecord.getProvider() + ":" + workloadRecord.getUpdateTime().getTime() +
-                        ":" + workloadRecord.getHostname() + ":" + workloadRecord.getCertExpiryTime().getTime();
+                        ":" + workloadRecord.getCertExpiryTime().getTime() + ":" + workloadRecord.getHostname();
                 if (flattenedIpAddresses.containsKey(mapKey)) {
                     flattenedIpAddresses.get(mapKey).add(workloadRecord.getIp());
                 } else {
@@ -1091,8 +1091,8 @@ public class InstanceCertManager {
                 wl.setUuid(tempArr[0])
                         .setProvider(tempArr[1])
                         .setUpdateTime(Timestamp.fromMillis(Long.parseLong(tempArr[2])))
-                        .setHostname(tempArr[3])
-                        .setCertExpiryTime(Timestamp.fromMillis(Long.parseLong(tempArr[4])))
+                        .setCertExpiryTime(Timestamp.fromMillis(Long.parseLong(tempArr[3])))
+                        .setHostname(tempArr[4])
                         .setIpAddresses(entry.getValue());
                 return wl;
             }).collect(Collectors.toList());
