@@ -62,10 +62,10 @@ CREATE TABLE IF NOT EXISTS `zts_store`.`workloads` (
   `service` VARCHAR(384) NOT NULL,
   `ip` VARCHAR(64) NOT NULL,
   `instanceId` VARCHAR(256) NOT NULL,
-  `hostname` VARCHAR(256) NOT NULL,
+  `hostname` VARCHAR(256) NOT NULL DEFAULT 'NA',
   `creationTime` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
   `updateTime` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3),
-  `certExpiryTime` DATETIME(3) NOT NULL;
+  `certExpiryTime` DATETIME(3) NOT NULL DEFAULT '19670-01-01 00:00:00.000',
   PRIMARY KEY (`instanceId`, `ip`, `service`),
   INDEX `idx_service` (`service` ASC),
   INDEX `idx_ip` (`ip` ASC))

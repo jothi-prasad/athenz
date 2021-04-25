@@ -69,11 +69,16 @@ public class DynamoDBWorkloadRecordStoreConnectionTest {
         Mockito.doReturn("1234").when(item).getString("instanceId");
         Mockito.doReturn("openstack").when(item).getString("provider");
         Mockito.doReturn("10.10.10.11").when(item).getString("ip");
-        Mockito.doReturn("test-host.corp.yahoo.com").when(item).getString("hostname");
+        Mockito.doReturn("test-host").when(item).getString("hostname");
+        Mockito.doReturn(true).when(item).hasAttribute("hostname");
         Mockito.doReturn(currTime).when(item).get("creationTime");
         Mockito.doReturn(currTime).when(item).get("updateTime");
+        Mockito.doReturn(currTime).when(item).get("certExpiryTime");
         Mockito.doReturn(currTime).when(item).getLong("creationTime");
         Mockito.doReturn(currTime).when(item).getLong("updateTime");
+        Mockito.doReturn(currTime).when(item).getLong("certExpiryTime");
+        Mockito.doReturn(true).when(item).hasAttribute("certExpiryTime");
+
 
         ItemCollection<QueryOutcome> itemCollection = Mockito.mock(ItemCollection.class);
         IteratorSupport<Item, QueryOutcome> iteratorSupport = Mockito.mock(IteratorSupport.class);
@@ -90,8 +95,9 @@ public class DynamoDBWorkloadRecordStoreConnectionTest {
         Assert.assertEquals(wlRecordList.get(0).getInstanceId(), "1234");
         Assert.assertEquals(wlRecordList.get(0).getProvider(), "openstack");
         Assert.assertEquals(wlRecordList.get(0).getIp(), "10.10.10.11");
-        Assert.assertEquals(wlRecordList.get(0).getHostname(), "test-host.corp.yahoo.com");
+        Assert.assertEquals(wlRecordList.get(0).getHostname(), "test-host");
         Assert.assertEquals(wlRecordList.get(0).getUpdateTime(), new Date(currTime));
+        Assert.assertEquals(wlRecordList.get(0).getCertExpiryTime(), new Date(currTime));
 
         dbConn.close();
     }
@@ -114,11 +120,13 @@ public class DynamoDBWorkloadRecordStoreConnectionTest {
         Mockito.doReturn("1234").when(item).getString("instanceId");
         Mockito.doReturn("openstack").when(item).getString("provider");
         Mockito.doReturn("athenz.api").when(item).getString("service");
-        Mockito.doReturn("test-host.corp.yahoo.com").when(item).getString("hostname");
+        Mockito.doReturn("test-host").when(item).getString("hostname");
         Mockito.doReturn(currTime).when(item).get("creationTime");
         Mockito.doReturn(currTime).when(item).get("updateTime");
+        Mockito.doReturn(currTime).when(item).get("certExpiryTime");
         Mockito.doReturn(currTime).when(item).getLong("creationTime");
         Mockito.doReturn(currTime).when(item).getLong("updateTime");
+        Mockito.doReturn(currTime).when(item).getLong("certExpiryTime");
 
         ItemCollection<QueryOutcome> itemCollection = Mockito.mock(ItemCollection.class);
         IteratorSupport<Item, QueryOutcome> iteratorSupport = Mockito.mock(IteratorSupport.class);
@@ -135,8 +143,9 @@ public class DynamoDBWorkloadRecordStoreConnectionTest {
         Assert.assertEquals(wlRecordList.get(0).getInstanceId(), "1234");
         Assert.assertEquals(wlRecordList.get(0).getProvider(), "openstack");
         Assert.assertEquals(wlRecordList.get(0).getService(), "athenz.api");
-        Assert.assertEquals(wlRecordList.get(0).getHostname(), "test-host.corp.yahoo.com");
+        Assert.assertEquals(wlRecordList.get(0).getHostname(), "NA");
         Assert.assertEquals(wlRecordList.get(0).getUpdateTime(), new Date(currTime));
+        Assert.assertEquals(wlRecordList.get(0).getCertExpiryTime(), new Date(0));
 
         dbConn.close();
     }

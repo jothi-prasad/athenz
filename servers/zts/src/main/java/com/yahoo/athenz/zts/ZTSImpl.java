@@ -2959,9 +2959,15 @@ public class ZTSImpl implements KeyStore, ZTSHandler {
         }
     }
 
-    void updateWorkloadRecord(String cn, String provider, String certReqInstanceId, String sanIpStr, Date certExpiryTime) {
+    void updateWorkloadRecord(String cn, String provider, String certReqInstanceId, String sanIpStr, String hostName, Date certExpiryTime) {
         if (StringUtil.isEmpty(sanIpStr)) {
             return;
+        }
+        if (hostName == null) {
+            hostName = cn + "." + sanIpStr;
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("hostname is not set by agent, hence forming the hostname {} with domain.service {} and sanIpStr {} ..", hostName, cn, sanIpStr);
+            }
         }
         WorkloadRecord workloadRecord;
         String[] sanIps = sanIpStr.split(",");
@@ -2975,6 +2981,7 @@ public class ZTSImpl implements KeyStore, ZTSHandler {
             workloadRecord.setCreationTime(currDate);
             workloadRecord.setUpdateTime(currDate);
             workloadRecord.setCertExpiryTime(certExpiryTime);
+            workloadRecord.setHostname(hostName);
             if (!instanceCertManager.updateWorkloadRecord(workloadRecord)) {
                 LOGGER.error("unable to update workload record={}", workloadRecord);
             }
@@ -3379,7 +3386,7 @@ public class ZTSImpl implements KeyStore, ZTSHandler {
 
         if (enableWorkloadStore && !athenzSysDomainCache.isWorkloadStoreExcludedProvider(provider)) {
             // workloads store update is on best-effort basis. No errors are thrown if the op is not successful.
-            updateWorkloadRecord(AthenzUtils.getPrincipalName(domain, service), provider, instanceId, sanIpStrForWorkloadStore, newCert.getNotAfter());
+            updateWorkloadRecord(AthenzUtils.getPrincipalName(domain, service), provider, instanceId, sanIpStrForWorkloadStore, info.getHostname(), newCert.getNotAfter());
         }
 
         // log our certificate

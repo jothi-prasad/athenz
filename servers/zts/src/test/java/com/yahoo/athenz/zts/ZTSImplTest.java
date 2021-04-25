@@ -11693,7 +11693,7 @@ public class ZTSImplTest {
         Mockito.when(mockICM.insertWorkloadRecord(any())).thenReturn(true, false);
         zts.insertWorkloadRecord("athenz.api", "openstack", "123", "", "test1.host.yahoo.cloud", expiryTime);
         Mockito.verify(mockICM, Mockito.times(0)).insertWorkloadRecord(any(WorkloadRecord.class));
-        zts.insertWorkloadRecord("athenz.api", "openstack", "123", "10.0.0.1, 10.0.0.2", "test2.host.yahoo.cloud", expiryTime);
+        zts.insertWorkloadRecord("athenz.api", "openstack", "123", "10.0.0.1, 10.0.0.2", null, expiryTime);
         Mockito.verify(mockICM, Mockito.times(2)).insertWorkloadRecord(any(WorkloadRecord.class));
         zts.instanceCertManager = origICM;
     }
@@ -11705,9 +11705,9 @@ public class ZTSImplTest {
         InstanceCertManager origICM = zts.instanceCertManager;
         zts.instanceCertManager = mockICM;
         Mockito.when(mockICM.updateWorkloadRecord(any())).thenReturn(true, false);
-        zts.updateWorkloadRecord("athenz.api", "openstack", "123", "", expiryTime);
+        zts.updateWorkloadRecord("athenz.api", "openstack", "123", "", "test.host-1.yahoo.cloud", expiryTime);
         Mockito.verify(mockICM, Mockito.times(0)).updateWorkloadRecord(any(WorkloadRecord.class));
-        zts.updateWorkloadRecord("athenz.api", "openstack", "123", "10.0.0.1, 10.0.0.2", expiryTime);
+        zts.updateWorkloadRecord("athenz.api", "openstack", "123", "10.0.0.1, 10.0.0.2", null, expiryTime);
         Mockito.verify(mockICM, Mockito.times(2)).updateWorkloadRecord(any(WorkloadRecord.class));
         zts.instanceCertManager = origICM;
     }
